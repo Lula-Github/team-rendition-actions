@@ -1,0 +1,68 @@
+name: Build & Test with GitVersion 🧪
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "release/**"
+      - "hotfix/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+env:
+  NUGET_PACKAGE_PATH: "./publish"
+  DOTNET_VERSION: "8.0.x"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ✅
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion ⚙️
+        uses: gittools/actions/gitversion/setup@v3.0.0
+        with:
+          versionSpec: "5.x"
+
+      - name: Determine Version 🔍
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3.0.0
+        with:
+          useConfigFile: true
+          updateAssemblyInfoFilename: "src/AppLogger/AppLogger.csproj"
+
+      - name: Output the FullSemVer variable ✏️
+        uses: gittools/actions/gitversion/command@v3.0.0
+        with:
+          arguments: "/showvariable FullSemVer"
+
+      - name: Display Version 💡
+        run: |
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "Major: ${{ steps.gitversion.outputs.major }}"
+          echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+          echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+
+      - name: Setup .NET 📦
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build and Publish 📂
+        run: |
+          dotnet restore
+          dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.fullSemVer }};AssemblyVersion=${{ steps.gitversion.outputs.fullSemVer }}
+          dotnet pack --configuration Release --no-build --output '${{ env.NUGET_PACKAGE_PATH }}' /p:Version=${{ steps.gitversion.outputs.fullSemVer }};AssemblyVersion=${{ steps.gitversion.outputs.fullSemVer }}
+          dotnet publish "src/AppLogger/AppLogger.csproj" --configuration Release --no-build --output '${{ env.NUGET_PACKAGE_PATH }}' /p:Version=${{ steps.gitversion.outputs.fullSemVer }};AssemblyVersion=${{ steps.gitversion.outputs.fullSemVer }}
+
+      - name: Publish Artifacts 💰
+        uses: actions/upload-artifact@v4
+        with:
+          path: publish/

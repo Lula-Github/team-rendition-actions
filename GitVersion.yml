@@ -1,0 +1,39 @@
+mode: ContinuousDeployment
+branches:
+  main:
+    regex: ^master$|^main$
+    mode: ContinuousDelivery
+    tag: ""
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    source-branches: ["develop", "release"]
+    is-release-branch: false
+  develop:
+    regex: ^dev(elop)?$
+    mode: ContinuousDeployment
+    tag: alpha
+    increment: Minor
+    track-merge-target: true
+    source-branches: []
+    is-release-branch: false
+  release:
+    regex: ^release?[/-]
+    mode: ContinuousDelivery
+    tag: beta
+    increment: None
+    source-branches: ["develop"]
+    is-release-branch: true
+  feature:
+    regex: ^features?[/-]
+    mode: ContinuousDelivery
+    tag: useBranchName
+    increment: Inherit
+    source-branches: ["develop"]
+    is-release-branch: false
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    tag: beta
+    increment: Patch
+    source-branches: ["main", "master"]
+    is-release-branch: false

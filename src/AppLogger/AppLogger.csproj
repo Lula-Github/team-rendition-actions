@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>AppLogger</PackageId>
+    <Version>1.2.3.4</Version>
+    <AssemblyVersion>1.2.3.4</AssemblyVersion>
+    <FileVersion>$(GitVersion_MajorMinorPatch)</FileVersion>
+    <Authors>Liam Beeton</Authors>
+    <Company>Lula</Company>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="docs\readme.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+</Project>

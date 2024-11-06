@@ -39,7 +39,7 @@ public class Logger : ILogger
     {
         return level switch
         {
-            LogLevel.Debug => ConsoleColor.Gray,
+            LogLevel.Debug => ConsoleColor.Blue,
             LogLevel.Info => ConsoleColor.Green,
             LogLevel.Warning => ConsoleColor.Yellow,
             LogLevel.Error => ConsoleColor.Red,
